@@ -5,8 +5,9 @@
  */
 
 // ─── Configuration ─────────────────────────────────────────────────────
-// Replace with your Raspberry Pi's local IP address
-const PI_BASE_URL = "http://192.168.1.100:5000";
+// Set EXPO_PUBLIC_PI_IP in app/.env (not committed to git)
+const PI_IP = process.env.EXPO_PUBLIC_PI_IP ?? "0.0.0.0";
+const PI_BASE_URL = `http://${PI_IP}:5000`;
 
 // ─── Types ─────────────────────────────────────────────────────────────
 
