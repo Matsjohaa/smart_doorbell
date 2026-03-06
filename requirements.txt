@@ -1,6 +1,6 @@
 # Raspberry Pi hardware
 RPi.GPIO>=0.7.1
-picamera2>=0.3.12
+# picamera2 – install via system package: sudo apt install python3-picamera2
 
 # Web framework
 flask>=3.0
