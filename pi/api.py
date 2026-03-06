@@ -2,15 +2,15 @@
 Flask REST API and MJPEG streaming server.
 
 Endpoints:
-  GET    /stream              – MJPEG live camera feed
-  GET    /events              – List events (query: limit, offset)
-  GET    /events/<id>         – Single event detail
-  PATCH  /events/<id>/seen    – Mark event as seen
-  GET    /people              – List known people
-  POST   /people              – Add person (multipart: name + image file)
-  DELETE /people/<id>         – Remove person
-  GET    /captures/<filename> – Serve a captured image
-  POST   /trigger             – Simulate a button press (for testing)
+  GET    /stream              - MJPEG live camera feed
+  GET    /events              - List events (query: limit, offset)
+  GET    /events/<id>         - Single event detail
+  PATCH  /events/<id>/seen    - Mark event as seen
+  GET    /people              - List known people
+  POST   /people              - Add person (multipart: name + image file)
+  DELETE /people/<id>         - Remove person
+  GET    /captures/<filename> - Serve a captured image
+  POST   /trigger             - Simulate a button press (for testing)
 """
 
 import os
@@ -124,7 +124,7 @@ def add_person():
 
     # Compute face encoding
     if not recognizer.add_known_face(person_id, name, filepath):
-        # No face found in image – roll back
+        # No face found in image - roll back
         database.delete_person(person_id)
         return jsonify({"error": "No face detected in the uploaded image"}), 400
 

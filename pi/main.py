@@ -1,5 +1,5 @@
 """
-Smart Doorbell – Main entry point.
+Smart Doorbell - Main entry point.
 
 Initialises all subsystems and runs the event loop:
   1. Database
@@ -44,7 +44,7 @@ def on_doorbell_press() -> None:
     # 1. Capture image
     image_path = camera.capture()
     if image_path is None:
-        logger.error("Image capture failed – aborting event")
+        logger.error("Image capture failed - aborting event")
         return
 
     # 2. Run face recognition
@@ -61,7 +61,7 @@ def on_doorbell_press() -> None:
         confidence=confidence,
     )
     logger.info(
-        "Event #%d logged – %s (confidence=%.2f)",
+        "Event #%d logged - %s (confidence=%.2f)",
         event_id, person_name, confidence,
     )
 
@@ -77,7 +77,7 @@ def on_doorbell_press() -> None:
 # ── Graceful shutdown ──────────────────────────────────────────────────
 
 def shutdown(signum=None, frame=None) -> None:
-    logger.info("Shutting down…")
+    logger.info("Shutting down...")
     camera.stop()
     gpio_cleanup()
     sys.exit(0)
@@ -116,7 +116,7 @@ def main() -> None:
     logger.info("API server running on http://%s:%d", API_HOST, API_PORT)
 
     # Keep the main thread alive (GPIO callbacks run on a background thread)
-    logger.info("System ready – waiting for doorbell presses…")
+    logger.info("System ready - waiting for doorbell presses...")
     signal.pause()
 
 

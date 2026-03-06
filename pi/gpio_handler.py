@@ -25,7 +25,7 @@ def setup_button(on_press: Callable[[], None]) -> None:
         on_press: Function to call when the button is pressed.
     """
     if not GPIO_AVAILABLE:
-        logger.warning("RPi.GPIO not available – button disabled (dev mode)")
+        logger.warning("RPi.GPIO not available - button disabled (dev mode)")
         return
 
     GPIO.setmode(GPIO.BCM)

@@ -55,7 +55,7 @@ def load_known_faces() -> None:
             _known_names = cached["names"]
             logger.info("Loaded %d cached face encodings", len(_known_encodings))
         except Exception:
-            logger.warning("Failed to load encoding cache, recomputing…")
+            logger.warning("Failed to load encoding cache, recomputing...")
 
     people = database.get_all_people()
 

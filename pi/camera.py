@@ -1,5 +1,5 @@
 """
-Camera module – still capture and MJPEG live streaming.
+Camera module - still capture and MJPEG live streaming.
 Uses picamera2 on the Raspberry Pi.
 """
 
@@ -25,7 +25,7 @@ try:
     PICAMERA_AVAILABLE = True
 except ImportError:
     PICAMERA_AVAILABLE = False
-    logger.warning("picamera2 not available – camera disabled (dev mode)")
+    logger.warning("picamera2 not available - camera disabled (dev mode)")
 
 
 class Camera:
@@ -39,7 +39,7 @@ class Camera:
     def start(self) -> None:
         """Initialize and start the camera."""
         if not PICAMERA_AVAILABLE:
-            logger.warning("Camera not started – picamera2 unavailable")
+            logger.warning("Camera not started - picamera2 unavailable")
             return
 
         self._cam = Picamera2()
@@ -62,7 +62,7 @@ class Camera:
         Returns the file path of the saved image, or None on failure.
         """
         if not self._started or self._cam is None:
-            logger.error("Cannot capture – camera not started")
+            logger.error("Cannot capture - camera not started")
             return None
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -81,7 +81,7 @@ class Camera:
         Each yielded value is raw JPEG bytes.
         """
         if not self._started or self._cam is None:
-            logger.error("Cannot stream – camera not started")
+            logger.error("Cannot stream - camera not started")
             return
 
         interval = 1.0 / STREAM_FPS
