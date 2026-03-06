@@ -45,7 +45,7 @@ def set_doorbell_callback(callback):
     _doorbell_callback = callback
 
 
-# ── Live Stream ────────────────────────────────────────────────────────
+# -- Live Stream --------------------------------------------------------
 
 @app.route("/stream")
 def stream():
@@ -63,7 +63,7 @@ def stream():
     return Response(generate(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
 
-# ── Events ─────────────────────────────────────────────────────────────
+# -- Events -------------------------------------------------------------
 
 @app.route("/events")
 def list_events():
@@ -91,7 +91,7 @@ def mark_event_seen(event_id):
     return jsonify({"error": "Event not found"}), 404
 
 
-# ── People ─────────────────────────────────────────────────────────────
+# -- People -------------------------------------------------------------
 
 @app.route("/people")
 def list_people():
@@ -141,7 +141,7 @@ def delete_person(person_id):
     return jsonify({"status": "deleted"})
 
 
-# ── Captures ───────────────────────────────────────────────────────────
+# -- Captures -----------------------------------------------------------
 
 @app.route("/captures/<path:filename>")
 def serve_capture(filename):
@@ -155,7 +155,7 @@ def serve_known_face(filename):
     return send_from_directory(KNOWN_FACES_DIR, filename)
 
 
-# ── Test / Debug ───────────────────────────────────────────────────────
+# -- Test / Debug -------------------------------------------------------
 
 @app.route("/trigger", methods=["POST"])
 def trigger():
@@ -166,7 +166,7 @@ def trigger():
     return jsonify({"status": "triggered"})
 
 
-# ── Startup ────────────────────────────────────────────────────────────
+# -- Startup ------------------------------------------------------------
 
 def run_server():
     """Start the Flask development server (called from a thread)."""

@@ -44,7 +44,7 @@ def init_db() -> None:
     conn.close()
 
 
-# ── People CRUD ────────────────────────────────────────────────────────
+# -- People CRUD --------------------------------------------------------
 
 def add_person(name: str, image_path: str) -> int:
     """Add a known person. Returns the new person id."""
@@ -92,7 +92,7 @@ def delete_person(person_id: int) -> bool:
     return True
 
 
-# ── Events CRUD ────────────────────────────────────────────────────────
+# -- Events CRUD --------------------------------------------------------
 
 def add_event(
     image_path: str,

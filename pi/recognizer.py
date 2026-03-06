@@ -25,7 +25,7 @@ _known_names: dict[int, str] = {}
 ENCODINGS_CACHE_PATH = os.path.join(KNOWN_FACES_DIR, "_encodings.pkl")
 
 
-# ── Encoding Management ───────────────────────────────────────────────
+# -- Encoding Management -----------------------------------------------
 
 def _compute_encoding(image_path: str) -> np.ndarray | None:
     """Compute a 128-d face encoding from an image file."""
@@ -109,7 +109,7 @@ def _save_cache() -> None:
         pickle.dump({"encodings": _known_encodings, "names": _known_names}, f)
 
 
-# ── Recognition ───────────────────────────────────────────────────────
+# -- Recognition -------------------------------------------------------
 
 def recognize(image_path: str) -> dict:
     """
@@ -119,7 +119,7 @@ def recognize(image_path: str) -> dict:
         {
             "person_id": int | None,
             "person_name": str,        # Name or "Unknown"
-            "confidence": float,        # 0.0–1.0 (1 = perfect match)
+            "confidence": float,        # 0.0-1.0 (1 = perfect match)
             "face_detected": bool,
         }
     """
@@ -139,7 +139,7 @@ def recognize(image_path: str) -> dict:
     unknown_encoding = face_recognition.face_encodings(image, face_locations)[0]
 
     if not _known_encodings:
-        logger.info("No known faces registered – result is Unknown")
+        logger.info("No known faces registered - result is Unknown")
         return {
             "person_id": None,
             "person_name": "Unknown",

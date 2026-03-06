@@ -23,7 +23,7 @@ try:
     FIREBASE_AVAILABLE = True
 except ImportError:
     FIREBASE_AVAILABLE = False
-    logger.warning("firebase-admin not installed – notifications disabled")
+    logger.warning("firebase-admin not installed - notifications disabled")
 
 
 def init_firebase() -> None:
@@ -35,7 +35,7 @@ def init_firebase() -> None:
 
     if not os.path.exists(FIREBASE_CREDENTIALS_PATH):
         logger.warning(
-            "Firebase credentials not found at %s – notifications disabled",
+            "Firebase credentials not found at %s - notifications disabled",
             FIREBASE_CREDENTIALS_PATH,
         )
         return
@@ -58,7 +58,7 @@ def send_notification(
     Returns True if sent successfully, False otherwise.
     """
     if not _initialized:
-        logger.warning("Firebase not initialized – skipping notification")
+        logger.warning("Firebase not initialized - skipping notification")
         return False
 
     title = "Doorbell"
