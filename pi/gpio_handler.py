@@ -1,13 +1,13 @@
 """
 GPIO handler for the doorbell button.
-Uses RPi.GPIO with edge detection and debouncing.
+Uses gpiozero (works on Bookworm and newer Pi OS versions).
 """
 
 import logging
 from typing import Callable
 
 try:
-    import RPi.GPIO as GPIO
+    from gpiozero import Button
     GPIO_AVAILABLE = True
 except ImportError:
     GPIO_AVAILABLE = False
@@ -15,6 +15,8 @@ except ImportError:
 from config import BUTTON_GPIO_PIN, BUTTON_DEBOUNCE_MS
 
 logger = logging.getLogger(__name__)
+
+_button = None
 
 
 def setup_button(on_press: Callable[[], None]) -> None:
@@ -24,28 +26,27 @@ def setup_button(on_press: Callable[[], None]) -> None:
     Args:
         on_press: Function to call when the button is pressed.
     """
+    global _button
+
     if not GPIO_AVAILABLE:
-        logger.warning("RPi.GPIO not available - button disabled (dev mode)")
+        logger.warning("gpiozero not available - button disabled (dev mode)")
         return
 
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(BUTTON_GPIO_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    bounce_seconds = BUTTON_DEBOUNCE_MS / 1000.0
+    _button = Button(BUTTON_GPIO_PIN, pull_up=False, bounce_time=bounce_seconds)
 
-    def _callback(channel: int) -> None:
-        logger.info("Button pressed (GPIO %d)", channel)
+    def _callback() -> None:
+        logger.info("Button pressed (GPIO %d)", BUTTON_GPIO_PIN)
         on_press()
 
-    GPIO.add_event_detect(
-        BUTTON_GPIO_PIN,
-        GPIO.RISING,
-        callback=_callback,
-        bouncetime=BUTTON_DEBOUNCE_MS,
-    )
+    _button.when_pressed = _callback
     logger.info("Button listener registered on GPIO %d", BUTTON_GPIO_PIN)
 
 
 def cleanup() -> None:
     """Release GPIO resources."""
-    if GPIO_AVAILABLE:
-        GPIO.cleanup()
+    global _button
+    if _button is not None:
+        _button.close()
+        _button = None
         logger.info("GPIO cleaned up")
