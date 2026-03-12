@@ -129,18 +129,32 @@ def add_person():
     Add a new known person.
     Expects multipart form data with:
       - name: string
-      - image: file upload
+      - image: file upload  OR  capture_filename: string (existing capture on Pi)
     """
     name = request.form.get("name")
     image = request.files.get("image")
+    capture_filename = request.form.get("capture_filename")
 
-    if not name or not image:
-        return jsonify({"error": "Both 'name' and 'image' are required"}), 400
+    if not name:
+        return jsonify({"error": "'name' is required"}), 400
 
-    # Save the image
-    filename = f"{name.lower().replace(' ', '_')}_{image.filename}"
-    filepath = os.path.join(KNOWN_FACES_DIR, filename)
-    image.save(filepath)
+    if not image and not capture_filename:
+        return jsonify({"error": "'image' or 'capture_filename' is required"}), 400
+
+    if capture_filename:
+        # Use an existing capture file from the Pi
+        src_path = os.path.join(CAPTURES_DIR, capture_filename)
+        if not os.path.isfile(src_path):
+            return jsonify({"error": "Capture file not found"}), 404
+        dest_filename = f"{name.lower().replace(' ', '_')}_{capture_filename}"
+        filepath = os.path.join(KNOWN_FACES_DIR, dest_filename)
+        import shutil
+        shutil.copy2(src_path, filepath)
+    else:
+        # Save the uploaded image
+        filename = f"{name.lower().replace(' ', '_')}_{image.filename}"
+        filepath = os.path.join(KNOWN_FACES_DIR, filename)
+        image.save(filepath)
 
     # Store in database
     person_id = database.add_person(name, filepath)
@@ -162,6 +176,22 @@ def delete_person(person_id):
         return jsonify({"error": "Person not found"}), 404
     recognizer.remove_known_face(person_id)
     return jsonify({"status": "deleted"})
+
+
+# -- Capture (Pi camera still photo) ------------------------------------
+
+@app.route("/capture", methods=["POST"])
+def capture_photo():
+    """Take a still photo with the Pi camera and return the filename."""
+    if _camera is None:
+        return jsonify({"error": "Camera not available"}), 503
+
+    filepath = _camera.capture()
+    if filepath is None:
+        return jsonify({"error": "Capture failed"}), 500
+
+    filename = os.path.basename(filepath)
+    return jsonify({"filename": filename}), 201
 
 
 # -- Captures -----------------------------------------------------------

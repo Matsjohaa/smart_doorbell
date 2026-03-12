@@ -26,8 +26,11 @@ import {
   Person,
   fetchPeople,
   addPerson,
+  addPersonFromCapture,
   deletePerson,
   getKnownFaceUrl,
+  captureFromPi,
+  getPiCapturePreviewUrl,
 } from "../../src/api";
 import { Colors, Spacing } from "../../src/theme";
 
@@ -41,6 +44,7 @@ export default function PeopleScreen() {
   const [showForm, setShowForm] = useState(false);
   const [newName, setNewName] = useState("");
   const [newImageUri, setNewImageUri] = useState<string | null>(null);
+  const [piCaptureFilename, setPiCaptureFilename] = useState<string | null>(null);
 
   const loadPeople = useCallback(async () => {
     try {
@@ -84,6 +88,7 @@ export default function PeopleScreen() {
 
     if (!result.canceled && result.assets[0]) {
       setNewImageUri(result.assets[0].uri);
+      setPiCaptureFilename(null);
     }
   };
 
@@ -102,6 +107,18 @@ export default function PeopleScreen() {
 
     if (!result.canceled && result.assets[0]) {
       setNewImageUri(result.assets[0].uri);
+      setPiCaptureFilename(null);
+    }
+  };
+
+  const captureFromPiCamera = async () => {
+    try {
+      const filename = await captureFromPi();
+      const previewUrl = getPiCapturePreviewUrl(filename);
+      setNewImageUri(previewUrl);
+      setPiCaptureFilename(filename);
+    } catch (e: any) {
+      Alert.alert("Capture Failed", e.message);
     }
   };
 
@@ -119,10 +136,15 @@ export default function PeopleScreen() {
 
     setAdding(true);
     try {
-      await addPerson(newName.trim(), newImageUri);
+      if (piCaptureFilename) {
+        await addPersonFromCapture(newName.trim(), piCaptureFilename);
+      } else {
+        await addPerson(newName.trim(), newImageUri);
+      }
       setShowForm(false);
       setNewName("");
       setNewImageUri(null);
+      setPiCaptureFilename(null);
       loadPeople();
     } catch (e: any) {
       Alert.alert("Error", e.message);
@@ -234,6 +256,10 @@ export default function PeopleScreen() {
                     <Ionicons name="camera-outline" size={20} color={Colors.primary} />
                     <Text style={styles.imagePickerText}>Camera</Text>
                   </TouchableOpacity>
+                  <TouchableOpacity style={styles.imagePickerBtn} onPress={captureFromPiCamera}>
+                    <Ionicons name="videocam-outline" size={20} color={Colors.primary} />
+                    <Text style={styles.imagePickerText}>Pi Cam</Text>
+                  </TouchableOpacity>
                 </View>
 
                 {newImageUri && (
@@ -247,6 +273,7 @@ export default function PeopleScreen() {
                       setShowForm(false);
                       setNewName("");
                       setNewImageUri(null);
+                      setPiCaptureFilename(null);
                     }}
                   >
                     <Text style={styles.cancelText}>Cancel</Text>

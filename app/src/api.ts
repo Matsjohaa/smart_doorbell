@@ -89,6 +89,19 @@ export async function fetchPeople(): Promise<Person[]> {
   return apiFetch<Person[]>("/people");
 }
 
+/** Capture a still photo using the Pi's camera. Returns the filename. */
+export async function captureFromPi(): Promise<string> {
+  const { filename } = await apiFetch<{ filename: string }>("/capture", {
+    method: "POST",
+  });
+  return filename;
+}
+
+/** Get the preview URL for a capture filename. */
+export function getPiCapturePreviewUrl(filename: string): string {
+  return `${PI_BASE_URL}/captures/${filename}`;
+}
+
 export async function addPerson(
   name: string,
   imageUri: string
@@ -123,6 +136,31 @@ export async function addPerson(
 
 export async function deletePerson(id: number): Promise<void> {
   await apiFetch(`/people/${id}`, { method: "DELETE" });
+}
+
+/**
+ * Add a person using a photo already captured on the Pi.
+ * Sends only the capture filename — no image upload needed.
+ */
+export async function addPersonFromCapture(
+  name: string,
+  captureFilename: string
+): Promise<{ id: number; name: string }> {
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("capture_filename", captureFilename);
+
+  const url = `${PI_BASE_URL}/people`;
+  const res = await fetch(url, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const body = await res.json();
+    throw new Error(body.error || `API ${res.status}`);
+  }
+  return res.json();
 }
 
 // ─── Test / Debug ──────────────────────────────────────────────────────
