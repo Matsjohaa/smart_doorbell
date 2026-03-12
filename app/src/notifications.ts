@@ -59,9 +59,14 @@ export async function registerForNotifications(): Promise<string | null> {
   }
 
   // Get the push token
-  const tokenData = await Notifications.getExpoPushTokenAsync();
-  console.log("Expo push token:", tokenData.data);
-  return tokenData.data;
+  try {
+    const tokenData = await Notifications.getExpoPushTokenAsync();
+    console.log("Expo push token:", tokenData.data);
+    return tokenData.data;
+  } catch (error) {
+    console.warn("Could not get push token (expected in Expo Go):", error);
+    return null;
+  }
 }
 
 /**

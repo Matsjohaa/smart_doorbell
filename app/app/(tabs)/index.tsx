@@ -5,7 +5,6 @@
 import { useState } from "react";
 import {
   View,
-  Image,
   Text,
   StyleSheet,
   ActivityIndicator,
@@ -14,6 +13,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import { WebView } from "react-native-webview";
 
 import { getStreamUrl, triggerDoorbell } from "../../src/api";
 import { Colors, Spacing } from "../../src/theme";
@@ -39,7 +39,7 @@ export default function LiveScreen() {
         {loading && !error && (
           <View style={styles.overlay}>
             <ActivityIndicator size="large" color={Colors.primary} />
-            <Text style={styles.overlayText}>Connecting to camera…</Text>
+            <Text style={styles.overlayText}>Connecting to camera...</Text>
           </View>
         )}
 
@@ -53,10 +53,13 @@ export default function LiveScreen() {
           </View>
         )}
 
-        <Image
+        <WebView
           source={{ uri: streamUrl }}
           style={styles.stream}
-          resizeMode="contain"
+          javaScriptEnabled={false}
+          scrollEnabled={false}
+          originWhitelist={["*"]}
+          allowsInlineMediaPlayback={true}
           onLoad={() => {
             setLoading(false);
             setError(false);

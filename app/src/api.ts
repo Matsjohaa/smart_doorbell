@@ -45,9 +45,9 @@ async function apiFetch<T>(
 
 // ─── Stream URL ────────────────────────────────────────────────────────
 
-/** Returns the full URL for the MJPEG live camera stream. */
+/** Returns the full URL for the MJPEG live camera stream page. */
 export function getStreamUrl(): string {
-  return `${PI_BASE_URL}/stream`;
+  return `${PI_BASE_URL}/stream/view`;
 }
 
 /** Returns the full URL for a captured image. */

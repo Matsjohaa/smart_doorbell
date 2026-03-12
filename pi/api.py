@@ -63,6 +63,29 @@ def stream():
     return Response(generate(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
 
+@app.route("/stream/view")
+def stream_view():
+    """HTML page that embeds the MJPEG stream (for mobile WebView)."""
+    html = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+        <style>
+            * { margin:0; padding:0; }
+            body { background:#000; width:100vw; height:100vh; display:flex;
+                   justify-content:center; align-items:center; overflow:hidden; }
+            img  { max-width:100%; max-height:100%; object-fit:contain; }
+        </style>
+    </head>
+    <body>
+        <img src="/stream" />
+    </body>
+    </html>
+    """
+    return Response(html, mimetype="text/html")
+
+
 # -- Events -------------------------------------------------------------
 
 @app.route("/events")
