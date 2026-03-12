@@ -2,15 +2,7 @@
  * Live View screen — displays the MJPEG camera stream from the Pi.
  */
 
-import { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { WebView } from "react-native-webview";
@@ -19,9 +11,6 @@ import { getStreamUrl, triggerDoorbell } from "../../src/api";
 import { Colors, Spacing } from "../../src/theme";
 
 export default function LiveScreen() {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
   const streamUrl = getStreamUrl();
 
   const handleTrigger = async () => {
@@ -36,23 +25,6 @@ export default function LiveScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.streamContainer}>
-        {loading && !error && (
-          <View style={styles.overlay}>
-            <ActivityIndicator size="large" color={Colors.primary} />
-            <Text style={styles.overlayText}>Connecting to camera...</Text>
-          </View>
-        )}
-
-        {error && (
-          <View style={styles.overlay}>
-            <Ionicons name="videocam-off" size={48} color={Colors.textSecondary} />
-            <Text style={styles.overlayText}>
-              Could not connect to the camera.{"\n"}
-              Make sure the Pi is running and on the same network.
-            </Text>
-          </View>
-        )}
-
         <WebView
           source={{ uri: streamUrl }}
           style={styles.stream}
@@ -60,14 +32,6 @@ export default function LiveScreen() {
           scrollEnabled={false}
           originWhitelist={["*"]}
           allowsInlineMediaPlayback={true}
-          onLoad={() => {
-            setLoading(false);
-            setError(false);
-          }}
-          onError={() => {
-            setLoading(false);
-            setError(true);
-          }}
         />
       </View>
 
@@ -88,12 +52,9 @@ const styles = StyleSheet.create({
   streamContainer: {
     flex: 1,
     backgroundColor: "#000",
-    justifyContent: "center",
-    alignItems: "center",
   },
   stream: {
-    width: "100%",
-    height: "100%",
+    flex: 1,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
