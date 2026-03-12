@@ -60,6 +60,7 @@ def on_doorbell_press() -> None:
         person_name=person_name,
         confidence=confidence,
     )
+    
     logger.info(
         "Event #%d logged - %s (confidence=%.2f)",
         event_id, person_name, confidence,
