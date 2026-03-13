@@ -37,6 +37,13 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "957a0e7f-04b2-4e1e-84ff-f48006ebac26"
+      }
+    },
+    "owner": "matsjoha"
   }
 }
