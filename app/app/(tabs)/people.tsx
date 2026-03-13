@@ -16,6 +16,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "expo-router";
@@ -45,6 +46,7 @@ export default function PeopleScreen() {
   const [newName, setNewName] = useState("");
   const [newImageUri, setNewImageUri] = useState<string | null>(null);
   const [piCaptureFilename, setPiCaptureFilename] = useState<string | null>(null);
+  const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
   const loadPeople = useCallback(async () => {
     try {
@@ -181,10 +183,12 @@ export default function PeopleScreen() {
 
   const renderPerson = ({ item }: { item: Person }) => (
     <View style={styles.personCard}>
-      <Image
-        source={{ uri: getKnownFaceUrl(item.image_path) }}
-        style={styles.personImage}
-      />
+      <TouchableOpacity onPress={() => setSelectedPerson(item)}>
+        <Image
+          source={{ uri: getKnownFaceUrl(item.image_path) }}
+          style={styles.personImage}
+        />
+      </TouchableOpacity>
       <View style={styles.personInfo}>
         <Text style={styles.personName}>{item.name}</Text>
         <Text style={styles.personDate}>
@@ -295,6 +299,41 @@ export default function PeopleScreen() {
             ) : null
           }
         />
+
+        {/* Image modal */}
+        <Modal
+          visible={selectedPerson != null}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setSelectedPerson(null)}
+        >
+          <View style={styles.modalBackdrop}>
+            <View style={styles.modalContent}>
+              <TouchableOpacity
+                style={styles.modalClose}
+                onPress={() => setSelectedPerson(null)}
+              >
+                <Ionicons name="close-circle" size={32} color="#fff" />
+              </TouchableOpacity>
+
+              {selectedPerson && (
+                <>
+                  <Image
+                    source={{ uri: getKnownFaceUrl(selectedPerson.image_path) }}
+                    style={styles.modalImage}
+                    resizeMode="contain"
+                  />
+                  <View style={styles.modalInfo}>
+                    <Text style={styles.modalName}>{selectedPerson.name}</Text>
+                    <Text style={styles.modalDate}>
+                      Added {new Date(selectedPerson.created_at).toLocaleDateString()}
+                    </Text>
+                  </View>
+                </>
+              )}
+            </View>
+          </View>
+        </Modal>
 
         {/* Floating add button */}
         {!showForm && (
@@ -456,6 +495,43 @@ const styles = StyleSheet.create({
   saveText: {
     color: "#fff",
     fontWeight: "600",
+  },
+
+  // Modal
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.85)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    width: "90%",
+    maxHeight: "80%",
+    alignItems: "center",
+  },
+  modalClose: {
+    alignSelf: "flex-end",
+    marginBottom: Spacing.sm,
+  },
+  modalImage: {
+    width: "100%",
+    height: 350,
+    borderRadius: 12,
+    backgroundColor: "#111",
+  },
+  modalInfo: {
+    marginTop: Spacing.md,
+    alignItems: "center",
+  },
+  modalName: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#fff",
+  },
+  modalDate: {
+    fontSize: 14,
+    color: "#ccc",
+    marginTop: 4,
   },
 
   // FAB

@@ -5,13 +5,35 @@
  *   3. People (manage known faces)
  */
 
-import { Tabs } from "expo-router";
+import { useCallback, useState } from "react";
+import { Tabs, useFocusEffect } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../src/theme";
+import { fetchEvents } from "../../src/api";
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>["name"];
 
 export default function TabLayout() {
+  const [unseenCount, setUnseenCount] = useState(0);
+
+  // Poll for unseen events periodically
+  const loadUnseenCount = useCallback(async () => {
+    try {
+      const events = await fetchEvents();
+      setUnseenCount(events.filter((e) => !e.seen).length);
+    } catch {
+      // ignore — Pi may be offline
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadUnseenCount();
+      const interval = setInterval(loadUnseenCount, 15_000);
+      return () => clearInterval(interval);
+    }, [loadUnseenCount])
+  );
+
   return (
     <Tabs
       screenOptions={{
@@ -38,6 +60,15 @@ export default function TabLayout() {
         name="notifications"
         options={{
           title: "Notifications",
+          tabBarBadge: unseenCount > 0 ? unseenCount : undefined,
+          tabBarBadgeStyle: {
+            backgroundColor: Colors.danger,
+            fontSize: 11,
+            minWidth: 18,
+            height: 18,
+            lineHeight: 18,
+            borderRadius: 9,
+          },
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="notifications" size={size} color={color} />
           ),
