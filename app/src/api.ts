@@ -163,6 +163,17 @@ export async function addPersonFromCapture(
   return res.json();
 }
 
+// ─── Push Notifications ────────────────────────────────────────────────
+
+/** Register an Expo push token with the Pi so it can send notifications. */
+export async function registerPushToken(token: string): Promise<void> {
+  await apiFetch("/register-token", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token }),
+  });
+}
+
 // ─── Test / Debug ──────────────────────────────────────────────────────
 
 /** Simulate a doorbell press (for testing without hardware). */

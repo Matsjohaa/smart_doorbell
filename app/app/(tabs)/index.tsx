@@ -15,6 +15,7 @@ export default function LiveScreen() {
 
   const handleTrigger = async () => {
     try {
+      // This can take some time.
       await triggerDoorbell();
       Alert.alert("Triggered", "Doorbell button simulated!");
     } catch (e: any) {

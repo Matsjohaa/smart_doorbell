@@ -11,9 +11,6 @@ CAPTURES_DIR = os.path.join(DATA_DIR, "captures")
 KNOWN_FACES_DIR = os.path.join(DATA_DIR, "known_faces")
 DB_PATH = os.path.join(DATA_DIR, "doorbell.db")
 
-# Firebase service account key (place the JSON file in pi/data/)
-FIREBASE_CREDENTIALS_PATH = os.path.join(DATA_DIR, "firebase_service_account.json")
-
 # -- GPIO ---------------------------------------------------------------
 BUTTON_GPIO_PIN = 17          # BCM pin number for the doorbell button
 BUTTON_DEBOUNCE_MS = 300      # Debounce time in milliseconds

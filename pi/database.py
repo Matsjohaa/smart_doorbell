@@ -39,6 +39,11 @@ def init_db() -> None:
             seen        INTEGER NOT NULL DEFAULT 0,
             FOREIGN KEY (person_id) REFERENCES people(id) ON DELETE SET NULL
         );
+
+        CREATE TABLE IF NOT EXISTS push_tokens (
+            token       TEXT    PRIMARY KEY,
+            created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
+        );
     """)
     conn.commit()
     conn.close()
@@ -141,3 +146,31 @@ def mark_event_seen(event_id: int) -> bool:
     changed = cur.rowcount > 0
     conn.close()
     return changed
+
+
+# -- Push Tokens ---------------------------------------------------------
+
+def add_push_token(token: str) -> None:
+    """Store a push token (ignore if it already exists)."""
+    conn = _get_connection()
+    conn.execute(
+        "INSERT OR IGNORE INTO push_tokens (token) VALUES (?)", (token,)
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_push_tokens() -> list[str]:
+    """Return all registered push tokens."""
+    conn = _get_connection()
+    rows = conn.execute("SELECT token FROM push_tokens").fetchall()
+    conn.close()
+    return [row["token"] for row in rows]
+
+
+def remove_push_token(token: str) -> None:
+    """Remove a push token (e.g. if delivery fails)."""
+    conn = _get_connection()
+    conn.execute("DELETE FROM push_tokens WHERE token = ?", (token,))
+    conn.commit()
+    conn.close()

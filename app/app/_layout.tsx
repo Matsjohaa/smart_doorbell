@@ -11,13 +11,24 @@ import {
   registerForNotifications,
   useNotificationListeners,
 } from "../src/notifications";
+import { registerPushToken } from "../src/api";
 
 export default function RootLayout() {
   const router = useRouter();
 
-  // Register for push notifications on mount
+  // Register for push notifications and send token to the Pi
   useEffect(() => {
-    registerForNotifications();
+    (async () => {
+      const token = await registerForNotifications();
+      if (token) {
+        try {
+          await registerPushToken(token);
+          console.log("Push token registered with Pi");
+        } catch (e) {
+          console.warn("Failed to register push token with Pi:", e);
+        }
+      }
+    })();
   }, []);
 
   // Navigate to notifications tab when a push notification is tapped

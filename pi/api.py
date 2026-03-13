@@ -210,6 +210,20 @@ def serve_known_face(filename):
 
 # -- Test / Debug -------------------------------------------------------
 
+@app.route("/register-token", methods=["POST"])
+def register_token():
+    """Register an Expo push token for notifications."""
+    data = request.get_json(silent=True)
+    token = data.get("token") if data else None
+
+    if not token:
+        return jsonify({"error": "'token' is required"}), 400
+
+    database.add_push_token(token)
+    logger.info("Push token registered: %s...", token[:20])
+    return jsonify({"status": "registered"})
+
+
 @app.route("/trigger", methods=["POST"])
 def trigger():
     """Simulate a doorbell press (useful for testing without hardware)."""

@@ -51,7 +51,7 @@ export default function PeopleScreen() {
       const data = await fetchPeople();
       setPeople(data);
     } catch (e) {
-      console.warn("Failed to fetch people:", e);
+      console.warn("Failed to fetch saved people:", e);
     } finally {
       setLoading(false);
       setRefreshing(false);

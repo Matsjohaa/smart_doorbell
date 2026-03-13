@@ -1,49 +1,28 @@
 """
-Push notification module using Firebase Cloud Messaging (FCM).
+Push notification module using the Expo Push Notification Service.
 
-Setup:
-  1. Create a Firebase project at https://console.firebase.google.com
-  2. Download the service account JSON key.
-  3. Place it at pi/data/firebase_service_account.json
-  4. In the mobile app, register for FCM and subscribe to the topic "doorbell".
+The mobile app registers its Expo push token with the Pi via POST /register-token.
+When a doorbell event occurs, we send a push to all registered tokens via
+Expo's HTTP API (no Firebase project required).
+
+Docs: https://docs.expo.dev/push-notifications/sending-notifications/
 """
 
+import json
 import logging
-import os
+import urllib.request
+import urllib.error
 
-from config import FIREBASE_CREDENTIALS_PATH
+import database
 
 logger = logging.getLogger(__name__)
 
-_initialized = False
-
-try:
-    import firebase_admin
-    from firebase_admin import credentials, messaging
-    FIREBASE_AVAILABLE = True
-except ImportError:
-    FIREBASE_AVAILABLE = False
-    logger.warning("firebase-admin not installed - notifications disabled")
+EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send"
 
 
 def init_firebase() -> None:
-    """Initialize the Firebase Admin SDK."""
-    global _initialized
-
-    if not FIREBASE_AVAILABLE:
-        return
-
-    if not os.path.exists(FIREBASE_CREDENTIALS_PATH):
-        logger.warning(
-            "Firebase credentials not found at %s - notifications disabled",
-            FIREBASE_CREDENTIALS_PATH,
-        )
-        return
-
-    cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
-    firebase_admin.initialize_app(cred)
-    _initialized = True
-    logger.info("Firebase initialized")
+    """No-op — kept for backwards compatibility with main.py."""
+    logger.info("Using Expo Push Notification Service (no Firebase needed)")
 
 
 def send_notification(
@@ -53,12 +32,13 @@ def send_notification(
     event_id: int,
 ) -> bool:
     """
-    Send a push notification to all devices subscribed to the "doorbell" topic.
+    Send a push notification to all registered Expo push tokens.
 
-    Returns True if sent successfully, False otherwise.
+    Returns True if at least one notification was sent successfully.
     """
-    if not _initialized:
-        logger.warning("Firebase not initialized - skipping notification")
+    tokens = database.get_push_tokens()
+    if not tokens:
+        logger.warning("No push tokens registered - skipping notification")
         return False
 
     title = "Doorbell"
@@ -67,21 +47,45 @@ def send_notification(
     else:
         body = "Someone is at the door"
 
-    message = messaging.Message(
-        notification=messaging.Notification(title=title, body=body),
-        data={
-            "event_id": str(event_id),
-            "person_name": person_name or "Unknown",
-            "confidence": str(round(confidence, 3)),
-            "image_path": image_path,
+    # Build messages (one per token)
+    messages = [
+        {
+            "to": token,
+            "sound": "default",
+            "title": title,
+            "body": body,
+            "data": {
+                "event_id": event_id,
+                "person_name": person_name or "Unknown",
+                "confidence": round(confidence, 3),
+                "image_path": image_path,
+            },
+        }
+        for token in tokens
+    ]
+
+    payload = json.dumps(messages).encode("utf-8")
+    req = urllib.request.Request(
+        EXPO_PUSH_URL,
+        data=payload,
+        headers={
+            "Content-Type": "application/json",
+            "Accept": "application/json",
         },
-        topic="doorbell",
     )
 
     try:
-        response = messaging.send(message)
-        logger.info("Notification sent: %s", response)
-        return True
-    except Exception as e:
-        logger.error("Failed to send notification: %s", e)
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            result = json.loads(resp.read().decode())
+            # Check for invalid tokens and remove them
+            for i, ticket in enumerate(result.get("data", [])):
+                if ticket.get("status") == "error":
+                    detail = ticket.get("details", {})
+                    if detail.get("error") == "DeviceNotRegistered":
+                        logger.info("Removing invalid token: %s", tokens[i][:20])
+                        database.remove_push_token(tokens[i])
+            logger.info("Push notification sent to %d device(s)", len(tokens))
+            return True
+    except urllib.error.URLError as e:
+        logger.error("Failed to send push notification: %s", e)
         return False
