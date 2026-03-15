@@ -5,7 +5,7 @@ Initialises all subsystems and runs the event loop:
   1. Database
   2. Face recognition (load known faces)
   3. Camera
-  4. Firebase notifications
+  4. Push notifications (Expo Push Service)
   5. GPIO button listener
   6. Flask API server (in a background thread)
 """
@@ -60,7 +60,7 @@ def on_doorbell_press() -> None:
         person_name=person_name,
         confidence=confidence,
     )
-    
+
     logger.info(
         "Event #%d logged - %s (confidence=%.2f)",
         event_id, person_name, confidence,
@@ -100,18 +100,15 @@ def main() -> None:
     # 2. Load known face encodings
     recognizer.load_known_faces()
 
-    # 3. Init Firebase
-    notifier.init_firebase()
-
-    # 4. Start camera
+    # 3. Start camera
     camera.start()
     set_camera(camera)
 
-    # 5. Set up GPIO button
+    # 4. Set up GPIO button
     set_doorbell_callback(on_doorbell_press)
     setup_button(on_press=on_doorbell_press)
 
-    # 6. Start Flask API in a background thread
+    # 5. Start Flask API in a background thread
     api_thread = threading.Thread(target=run_server, daemon=True)
     api_thread.start()
     logger.info("API server running on http://%s:%d", API_HOST, API_PORT)

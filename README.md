@@ -23,7 +23,7 @@ smart_doorbell/
 │   ├── gpio_handler.py      # Button press detection via GPIO
 │   ├── camera.py            # Still capture & MJPEG streaming
 │   ├── recognizer.py        # Face detection & recognition
-│   ├── notifier.py          # Firebase Cloud Messaging push notifications
+│   ├── notifier.py          # Push notifications (Expo Push Service)
 │   ├── api.py               # Flask REST API for the mobile app
 │   └── data/                # Created at runtime
 │       ├── doorbell.db      # SQLite database
@@ -70,11 +70,7 @@ source .venv/bin/activate
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. (Optional) Place Firebase credentials
-#    Download service account JSON from Firebase Console
-#    and save it as: pi/data/firebase_service_account.json
-
-# 5. Run the system
+# 4. Run the system
 cd pi
 python main.py
 ```

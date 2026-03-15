@@ -1,7 +1,7 @@
 /**
  * Push notification helpers using expo-notifications.
  *
- * Registers for push notifications and subscribes to the "doorbell" FCM topic.
+ * Registers for push notifications via the Expo Push Notification Service.
  * On receiving a notification, it can be handled in the app.
  */
 

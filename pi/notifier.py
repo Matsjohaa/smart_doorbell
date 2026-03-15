@@ -3,7 +3,7 @@ Push notification module using the Expo Push Notification Service.
 
 The mobile app registers its Expo push token with the Pi via POST /register-token.
 When a doorbell event occurs, we send a push to all registered tokens via
-Expo's HTTP API (no Firebase project required).
+Expo's HTTP API (no extra services required).
 
 Docs: https://docs.expo.dev/push-notifications/sending-notifications/
 """
@@ -18,11 +18,6 @@ import database
 logger = logging.getLogger(__name__)
 
 EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send"
-
-
-def init_firebase() -> None:
-    """No-op — kept for backwards compatibility with main.py."""
-    logger.info("Using Expo Push Notification Service (no Firebase needed)")
 
 
 def send_notification(
