@@ -3,12 +3,14 @@
 An event-driven smart doorbell built with a Raspberry Pi 4, camera module, and a mobile app. When someone presses the button, the system captures an image, runs face recognition locally, and sends a push notification to your phone.
 
 # To start project on pi:
+Clone on pi:
 ```
 git clone https://github.com/Matsjohaa/smart_doorbell
 ```
-
+To start project:
 ```
 cd ~/smart_doorbell
+git pull
 python3 -m venv --system-site-packages venv
 source venv/bin/activate
 pip install -r requirements.txt

@@ -70,7 +70,11 @@ class Camera:
         filepath = os.path.join(CAPTURES_DIR, filename)
 
         with self._lock:
-            self._cam.capture_file(filepath)
+            self._cam.capture_file(
+                filepath,
+                name="main",
+                quality=JPEG_QUALITY,
+            )
 
         logger.info("Image captured: %s", filepath)
         return filepath
@@ -88,7 +92,7 @@ class Camera:
         while True:
             buf = io.BytesIO()
             with self._lock:
-                self._cam.capture_file(buf, format="jpeg")
+                self._cam.capture_file(buf, name="lores", format="jpeg")
             yield buf.getvalue()
             time.sleep(interval)
 
