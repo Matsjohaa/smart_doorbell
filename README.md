@@ -4,7 +4,7 @@ An event-driven smart doorbell built with a Raspberry Pi 4, camera module, and a
 
 # To start project on pi:
 ```
-git clone [<repo-url>](https://github.com/Matsjohaa/smart_doorbell)
+git clone https://github.com/Matsjohaa/smart_doorbell
 ```
 
 ```
