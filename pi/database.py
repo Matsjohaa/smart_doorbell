@@ -1,6 +1,3 @@
-"""
-SQLite database helpers for events and known people.
-"""
 
 import sqlite3
 import os
@@ -49,8 +46,7 @@ def init_db() -> None:
     conn.close()
 
 
-# -- People CRUD --------------------------------------------------------
-
+# People CRUD 
 def add_person(name: str, image_path: str) -> int:
     """Add a known person. Returns the new person id."""
     conn = _get_connection()
@@ -97,7 +93,7 @@ def delete_person(person_id: int) -> bool:
     return True
 
 
-# -- Events CRUD --------------------------------------------------------
+# Events CRUD 
 
 def add_event(
     image_path: str,
@@ -148,8 +144,7 @@ def mark_event_seen(event_id: int) -> bool:
     return changed
 
 
-# -- Push Tokens ---------------------------------------------------------
-
+# Push Tokens
 def add_push_token(token: str) -> None:
     """Store a push token (ignore if it already exists)."""
     conn = _get_connection()

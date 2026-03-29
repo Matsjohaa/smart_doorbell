@@ -1,7 +1,4 @@
-"""
-GPIO handler for the doorbell button.
-Uses gpiozero (works on Bookworm and newer Pi OS versions).
-"""
+
 
 import logging
 from typing import Callable

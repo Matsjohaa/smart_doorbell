@@ -1,8 +1,3 @@
-/**
- * API service for communicating with the Raspberry Pi backend.
- *
- * Change PI_BASE_URL to match your Pi's IP address on the local network.
- */
 
 // ─── Configuration ─────────────────────────────────────────────────────
 // Set EXPO_PUBLIC_PI_IP in app/.env (not committed to git)

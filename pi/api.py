@@ -45,8 +45,7 @@ def set_doorbell_callback(callback):
     _doorbell_callback = callback
 
 
-# -- Live Stream --------------------------------------------------------
-
+# Live Stream
 @app.route("/stream")
 def stream():
     """MJPEG live camera feed."""
@@ -86,8 +85,7 @@ def stream_view():
     return Response(html, mimetype="text/html")
 
 
-# -- Events -------------------------------------------------------------
-
+#Events
 @app.route("/events")
 def list_events():
     """Return a JSON list of events."""
@@ -114,8 +112,7 @@ def mark_event_seen(event_id):
     return jsonify({"error": "Event not found"}), 404
 
 
-# -- People -------------------------------------------------------------
-
+# People
 @app.route("/people")
 def list_people():
     """Return a JSON list of known people."""
@@ -177,9 +174,7 @@ def delete_person(person_id):
     recognizer.remove_known_face(person_id)
     return jsonify({"status": "deleted"})
 
-
-# -- Capture (Pi camera still photo) ------------------------------------
-
+#Capture still image
 @app.route("/capture", methods=["POST"])
 def capture_photo():
     """Take a still photo with the Pi camera and return the filename."""
@@ -194,8 +189,7 @@ def capture_photo():
     return jsonify({"filename": filename}), 201
 
 
-# -- Captures -----------------------------------------------------------
-
+# Captures
 @app.route("/captures/<path:filename>")
 def serve_capture(filename):
     """Serve a captured image file."""
@@ -208,8 +202,7 @@ def serve_known_face(filename):
     return send_from_directory(KNOWN_FACES_DIR, filename)
 
 
-# -- Test / Debug -------------------------------------------------------
-
+# Test
 @app.route("/register-token", methods=["POST"])
 def register_token():
     """Register an Expo push token for notifications."""
@@ -233,8 +226,7 @@ def trigger():
     return jsonify({"status": "triggered"})
 
 
-# -- Startup ------------------------------------------------------------
-
+#startup
 def run_server():
     """Start the Flask development server (called from a thread)."""
     app.run(host=API_HOST, port=API_PORT, threaded=True)

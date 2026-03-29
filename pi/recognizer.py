@@ -25,7 +25,7 @@ _known_names: dict[int, str] = {}
 ENCODINGS_CACHE_PATH = os.path.join(KNOWN_FACES_DIR, "_encodings.pkl")
 
 
-# -- Encoding Management -----------------------------------------------
+# Encoding Management 
 
 def _compute_encoding(image_path: str) -> np.ndarray | None:
     """Compute a 128-d face encoding from an image file."""
@@ -109,8 +109,7 @@ def _save_cache() -> None:
         pickle.dump({"encodings": _known_encodings, "names": _known_names}, f)
 
 
-# -- Recognition -------------------------------------------------------
-
+#  Recognition 
 def recognize(image_path: str) -> dict:
     """
     Identify the person in a captured image.

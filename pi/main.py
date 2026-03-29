@@ -23,7 +23,7 @@ from gpio_handler import setup_button, cleanup as gpio_cleanup
 from api import app, set_camera, set_doorbell_callback, run_server
 from config import API_HOST, API_PORT
 
-# -- Logging ------------------------------------------------------------
+# Logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  %(levelname)-8s  %(name)s  %(message)s",
@@ -31,11 +31,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger("main")
 
-# -- Global camera instance ---------------------------------------------
+# Global camera instance 
 camera = Camera()
 
 
-# -- Doorbell event handler ---------------------------------------------
+# Doorbell event handler
 
 def on_doorbell_press() -> None:
     """Called when the physical button is pressed (or /trigger is hit)."""
@@ -75,8 +75,7 @@ def on_doorbell_press() -> None:
     )
 
 
-# -- Graceful shutdown --------------------------------------------------
-
+# Graceful shutdown 
 def shutdown(signum=None, frame=None) -> None:
     logger.info("Shutting down...")
     camera.stop()
@@ -84,8 +83,7 @@ def shutdown(signum=None, frame=None) -> None:
     sys.exit(0)
 
 
-# -- Main ---------------------------------------------------------------
-
+# Main
 def main() -> None:
     logger.info("Starting Smart Doorbell system")
 

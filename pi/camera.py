@@ -1,8 +1,3 @@
-"""
-Camera module - still capture and MJPEG live streaming.
-Uses picamera2 on the Raspberry Pi.
-"""
-
 import io
 import os
 import time
