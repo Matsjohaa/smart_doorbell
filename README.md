@@ -20,6 +20,7 @@ python3 main.py
 
 
 
+
 # To start mobile app:
 
 ```
