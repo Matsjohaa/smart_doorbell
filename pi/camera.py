@@ -65,11 +65,7 @@ class Camera:
         filepath = os.path.join(CAPTURES_DIR, filename)
 
         with self._lock:
-            self._cam.capture_file(
-                filepath,
-                name="main",
-                quality=JPEG_QUALITY,
-            )
+            self._cam.capture_file(filepath, name="main")
 
         logger.info("Image captured: %s", filepath)
         return filepath
