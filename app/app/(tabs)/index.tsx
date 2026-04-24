@@ -4,6 +4,7 @@
 
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useIsFocused } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { WebView } from "react-native-webview";
 
@@ -12,6 +13,7 @@ import { Colors, Spacing } from "../../src/theme";
 
 export default function LiveScreen() {
   const streamUrl = getStreamUrl();
+  const isFocused = useIsFocused();
 
   const handleTrigger = async () => {
     try {
@@ -26,14 +28,20 @@ export default function LiveScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.streamContainer}>
-        <WebView
-          source={{ uri: streamUrl }}
-          style={styles.stream}
-          javaScriptEnabled={false}
-          scrollEnabled={false}
-          originWhitelist={["*"]}
-          allowsInlineMediaPlayback={true}
-        />
+        {isFocused ? (
+          <WebView
+            source={{ uri: streamUrl }}
+            style={styles.stream}
+            javaScriptEnabled={false}
+            scrollEnabled={false}
+            originWhitelist={["*"]}
+            allowsInlineMediaPlayback={true}
+          />
+        ) : (
+          <View style={styles.overlay}>
+            <Text style={styles.overlayText}>Stream paused</Text>
+          </View>
+        )}
       </View>
 
       {/* Test button: simulate doorbell press */}
